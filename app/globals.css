@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 23, 23, 23; /* Darker text for better contrast */
+  --background-rgb: 255, 255, 255;
+}
+
+/* Dark mode colors if needed */
+.dark {
+  --foreground-rgb: 229, 229, 229;
+  --background-rgb: 17, 24, 39;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* Better form controls */
+input, select, textarea {
+  color: rgb(23, 23, 23);
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  color: #f3f4f6;
+  background-color: #1f2937;
+  border-color: #4b5563;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Better contrast for admin tables */
+.table-auto {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-auto th,
+.table-auto td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .table-auto th,
+.dark .table-auto td {
+  border-color: #374151;
+}
