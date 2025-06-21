@@ -6,16 +6,16 @@ const nextConfig = {
     reactRemoveProperties: process.env.NODE_ENV === 'production',
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
   },
+  // Disable experimental features for stability
   experimental: {
-    esmExternals: true,
-    // Enable concurrent features
-    workerThreads: true,
-    cpus: 4,
+    esmExternals: false,
   },
   // Enable production source maps for better debugging
   productionBrowserSourceMaps: true,
   // Enable compression
   compress: true,
+  // Disable static optimization for now to prevent build issues
+  output: 'standalone',
   // Environment variables that should be exposed to the browser
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
