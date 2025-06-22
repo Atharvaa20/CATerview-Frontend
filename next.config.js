@@ -16,6 +16,15 @@ const nextConfig = {
   compress: true,
   // Disable static optimization for now to prevent build issues
   output: 'standalone',
+  // Handle API routes properly
+  async rewrites() {
+    return [
+      {
+        source: '/api/experience/:path*',
+        destination: '/api/experience/:path*',
+      },
+    ];
+  },
   // Environment variables that should be exposed to the browser
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',

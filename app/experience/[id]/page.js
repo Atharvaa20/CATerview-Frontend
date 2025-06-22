@@ -51,16 +51,11 @@ export default function ExperiencePage() {
     setLoading(true);
     try {
       console.log('Fetching experience with ID:', id);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const response = await fetch(
-        `${apiUrl}/api/experiences/${id}`,
-        { 
-          cache: 'no-store',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
+      
+      // Use the new API route
+      const response = await fetch(`/api/experience/${id}`, { 
+        cache: 'no-store',
+      });
 
       console.log('API Response status:', response.status);
 
@@ -74,7 +69,30 @@ export default function ExperiencePage() {
       setUpvotes(data.upvotes || 0);
     } catch (error) {
       console.error('Error fetching experience:', error);
-      // Optionally show error to user
+      // Fallback to direct API call if the route fails
+      try {
+        console.log('Trying direct API call...');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const directResponse = await fetch(
+          `${apiUrl}/api/experiences/${id}`,
+          { 
+            cache: 'no-store',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
+        );
+
+        if (!directResponse.ok) {
+          throw new Error(`Direct API call failed: ${directResponse.statusText}`);
+        }
+
+        const data = await directResponse.json();
+        setExperience(data);
+        setUpvotes(data.upvotes || 0);
+      } catch (fallbackError) {
+        console.error('Fallback API call failed:', fallbackError);
+      }
     } finally {
       setLoading(false);
     }
