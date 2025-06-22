@@ -6,9 +6,6 @@
       "use": "@vercel/next"
     }
   ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ],
   "build": {
     "env": {
       "NODE_ENV": "production"
