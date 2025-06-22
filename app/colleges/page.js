@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 function ExperienceItem({ experience, collegeId }) {
+  const router = useRouter();
   // Safely get profile data with defaults
   const profile = experience.profile || {};
   const stream = profile.stream || 'Not specified';
@@ -21,12 +22,17 @@ function ExperienceItem({ experience, collegeId }) {
   const catPercentile = profile.catPercentile || 'N/A';
   const category = profile.category || 'Not specified';
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    router.push(`/experience/${experience.id}?collegeId=${collegeId}`, undefined, { shallow: true });
+  };
+
   return (
     <div className="mt-3">
-      <Link 
+      <a 
         href={`/experience/${experience.id}?collegeId=${collegeId}`}
-        className="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-        onClick={(e) => e.stopPropagation()}
+        className="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+        onClick={handleClick}
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -84,7 +90,7 @@ function ExperienceItem({ experience, collegeId }) {
             </p>
           </div>
         )}
-      </Link>
+      </a>
     </div>
   );
 }

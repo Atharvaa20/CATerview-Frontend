@@ -5,6 +5,11 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
+
 export default function ExperiencePage() {
   const { id } = useParams();
   const router = useRouter();
@@ -29,30 +34,51 @@ export default function ExperiencePage() {
   }
 
   useEffect(() => {
-    if (id) {
-      fetchExperience();
-    } else {
+    if (!id) {
       router.push('/colleges');
+      return;
     }
-  }, [id])
+    
+    // Add a small delay to ensure router is ready
+    const timer = setTimeout(() => {
+      fetchExperience();
+    }, 0);
+    
+    return () => clearTimeout(timer);
+  }, [id, router])
 
   const fetchExperience = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/experiences/${id}`)
+      console.log('Fetching experience with ID:', id);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(
+        `${apiUrl}/api/experiences/${id}`,
+        { 
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      console.log('API Response status:', response.status);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch experience')
+        throw new Error(`Failed to fetch experience: ${response.statusText}`);
       }
 
-      const data = await response.json()
-      setExperience(data)
-      setUpvotes(data.upvotes)
+      const data = await response.json();
+      console.log('Experience data:', data);
+      setExperience(data);
+      setUpvotes(data.upvotes || 0);
     } catch (error) {
-      console.error('Error fetching experience:', error)
+      console.error('Error fetching experience:', error);
+      // Optionally show error to user
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleHelpful = async () => {
     try {
