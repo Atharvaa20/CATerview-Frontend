@@ -14,12 +14,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 function ExperienceItem({ experience, collegeId }) {
-  const router = useRouter();
-  
-  const handleClick = () => {
-    router.push(`/experience/${experience.id}`);
-  };
-
   // Safely get profile data with defaults
   const profile = experience.profile || {};
   const stream = profile.stream || 'Not specified';
@@ -28,66 +22,68 @@ function ExperienceItem({ experience, collegeId }) {
   const category = profile.category || 'Not specified';
 
   return (
-    <div 
-      className="mt-3 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md cursor-pointer transition-shadow"
-      onClick={handleClick}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-800">
-            <span className="text-gray-600">Interview Experience By </span>
-            <span className="text-blue-600 hover:text-blue-800 transition-colors duration-200">
-              {experience.user?.name || 'Anonymous'}
-            </span>
-          </h3>
+    <div className="mt-3">
+      <Link 
+        href={`/experience/${experience.id}`}
+        className="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-gray-800">
+              <span className="text-gray-600">Interview Experience By </span>
+              <span className="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                {experience.user?.name || 'Anonymous'}
+              </span>
+            </h3>
+            
+            <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
+              <div className="flex items-center">
+                <AcademicCapIcon className="h-3 w-3 mr-1 text-gray-400" />
+                <span>{stream}</span>
+              </div>
+              <div className="flex items-center">
+                <BriefcaseIcon className="h-3 w-3 mr-1 text-gray-400" />
+                <span>{workExp} {workExp === '1' ? 'year' : 'years'} exp</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-medium">CAT:</span>
+                <span className="ml-1">{catPercentile}%ile</span>
+              </div>
+              <div className="flex items-center">
+                <span className="font-medium">Result:</span>
+                <span className="ml-1">{category}</span>
+              </div>
+            </div>
+          </div>
           
-          <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
-            <div className="flex items-center">
-              <AcademicCapIcon className="h-3 w-3 mr-1 text-gray-400" />
-              <span>{stream}</span>
-            </div>
-            <div className="flex items-center">
-              <BriefcaseIcon className="h-3 w-3 mr-1 text-gray-400" />
-              <span>{workExp} {workExp === '1' ? 'year' : 'years'} exp</span>
-            </div>
-            <div className="flex items-center">
-              <span className="font-medium">CAT:</span>
-              <span className="ml-1">{catPercentile}%ile</span>
-            </div>
-            <div className="flex items-center">
-              <span className="font-medium">Result:</span>
-              <span className="ml-1">{category}</span>
-            </div>
+          <div className="ml-4 flex-shrink-0">
+            {experience.isVerified ? (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <CheckCircleIcon className="h-3 w-3 mr-1" />
+                Verified
+              </span>
+            ) : (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <ClockIcon className="h-3 w-3 mr-1" />
+                Pending
+              </span>
+            )}
+            
+            <p className="mt-2 text-xs text-gray-500 flex items-center justify-end">
+              <CalendarIcon className="h-3 w-3 mr-1 text-gray-400" />
+              {new Date(experience.createdAt).toLocaleDateString()}
+            </p>
           </div>
         </div>
         
-        <div className="ml-4 flex-shrink-0">
-          {experience.isVerified ? (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              <CheckCircleIcon className="h-3 w-3 mr-1" />
-              Verified
-            </span>
-          ) : (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-              <ClockIcon className="h-3 w-3 mr-1" />
-              Pending
-            </span>
-          )}
-          
-          <p className="mt-2 text-xs text-gray-500 flex items-center justify-end">
-            <CalendarIcon className="h-3 w-3 mr-1 text-gray-400" />
-            {new Date(experience.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-      </div>
-      
-      {experience.watSummary && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-xs text-gray-600 line-clamp-2">
-            {experience.watSummary}
-          </p>
-        </div>
-      )}
+        {experience.watSummary && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <p className="text-xs text-gray-600 line-clamp-2">
+              {experience.watSummary}
+            </p>
+          </div>
+        )}
+      </Link>
     </div>
   );
 }
@@ -338,6 +334,12 @@ export default function CollegesPage() {
           )}
         </div>
       )}
+      
+      {/* Contact Us Footer */}
+      <div className="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+        <p>Need help? <a href="mailto:caterview.otp@gmail.com" className="text-blue-600 hover:text-blue-800">Contact Us</a></p>
+        <p className="mt-1">© {new Date().getFullYear()} CATerview. All rights reserved.</p>
+      </div>
     </div>
   )
 }

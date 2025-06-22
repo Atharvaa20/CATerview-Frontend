@@ -85,7 +85,7 @@ export default function Home() {
 
       <div className="mb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-white-900">
             Top B-Schools
           </h2>
         </div>
