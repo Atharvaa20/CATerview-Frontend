@@ -18,6 +18,7 @@ export default function ExperiencePage() {
   const searchParams = useSearchParams();
   const [experience, setExperience] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isHelpful, setIsHelpful] = useState(false);
   const [upvotes, setUpvotes] = useState(0);
   
@@ -76,47 +77,36 @@ export default function ExperiencePage() {
     try {
       console.log('Fetching experience with ID:', id);
       
-      // Use the new API route
-      const response = await fetch(`/api/experience/${id}`, { 
-        cache: 'no-store',
-      });
+      // Use the direct API URL from environment variables
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(
+        `${apiUrl}/api/experiences/${id}`,
+        { 
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          //credentials: 'include',
+        }
+      );
 
       console.log('API Response status:', response.status);
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch experience: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error(`Failed to fetch experience: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
       console.log('Experience data:', data);
       setExperience(data);
       setUpvotes(data.upvotes || 0);
+      setError(null);
     } catch (error) {
       console.error('Error fetching experience:', error);
-      // Fallback to direct API call if the route fails
-      try {
-        console.log('Trying direct API call...');
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-        const directResponse = await fetch(
-          `${apiUrl}/api/experiences/${id}`,
-          { 
-            cache: 'no-store',
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }
-        );
-
-        if (!directResponse.ok) {
-          throw new Error(`Direct API call failed: ${directResponse.statusText}`);
-        }
-
-        const data = await directResponse.json();
-        setExperience(data);
-        setUpvotes(data.upvotes || 0);
-      } catch (fallbackError) {
-        console.error('Fallback API call failed:', fallbackError);
-      }
+      setError(error.message || 'Failed to load experience');
+      setExperience(null);
     } finally {
       setLoading(false);
     }
