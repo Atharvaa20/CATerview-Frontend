@@ -15,6 +15,9 @@ import {
 
 function ExperienceItem({ experience, collegeId }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isExpanded, setIsExpanded] = useState(false);
+
   // Safely get profile data with defaults
   const profile = experience.profile || {};
   const stream = profile.stream || 'Not specified';
@@ -22,17 +25,24 @@ function ExperienceItem({ experience, collegeId }) {
   const catPercentile = profile.catPercentile || 'N/A';
   const category = profile.category || 'Not specified';
 
+  // Handle click to ensure proper client-side navigation
   const handleClick = (e) => {
     e.preventDefault();
+    // Use push with shallow routing to avoid full page reload
     router.push(`/experience/${experience.id}?collegeId=${collegeId}`, undefined, { shallow: true });
+    // Add a small delay to ensure state updates before navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50);
   };
 
   return (
     <div className="mt-3">
-      <a 
+      <Link 
         href={`/experience/${experience.id}?collegeId=${collegeId}`}
         className="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
         onClick={handleClick}
+        scroll={false}
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -90,7 +100,7 @@ function ExperienceItem({ experience, collegeId }) {
             </p>
           </div>
         )}
-      </a>
+      </Link>
     </div>
   );
 }

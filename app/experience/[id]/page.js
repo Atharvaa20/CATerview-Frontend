@@ -5,9 +5,11 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-// Force dynamic rendering
+// Ensure dynamic rendering
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
+
+export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
 export default function ExperiencePage() {
@@ -38,17 +40,39 @@ export default function ExperiencePage() {
       router.push('/colleges');
       return;
     }
+
+    console.log('Fetching experience with ID:', id);
     
-    // Add a small delay to ensure router is ready
-    const timer = setTimeout(() => {
+    // Mark as loading and fetch the experience
+    setLoading(true);
+    fetchExperience();
+    
+    // Cleanup function
+    return () => {
+      // Cancel any pending requests or timeouts
+      setLoading(false);
+    };
+    // We need to include router in the dependency array to avoid stale closures
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+  
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handleRouteChange = () => {
+      // Force a re-render when route changes (back/forward)
+      setExperience(null);
+      setUpvotes(0);
+      setLoading(true);
       fetchExperience();
-    }, 0);
-    
-    return () => clearTimeout(timer);
-  }, [id, router])
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, [id]);
 
   const fetchExperience = async () => {
-    setLoading(true);
     try {
       console.log('Fetching experience with ID:', id);
       
