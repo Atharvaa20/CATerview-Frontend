@@ -24,8 +24,9 @@ function ExperienceItem({ experience, collegeId }) {
   return (
     <div className="mt-3">
       <Link 
-        href={`/experience/${experience.id}`}
+        href={`/experience/${experience.id}?collegeId=${collegeId}`}
         className="block p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">

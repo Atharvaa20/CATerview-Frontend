@@ -1,32 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
+import { useState, useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { CheckCircleIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 export default function ExperiencePage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const [experience, setExperience] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [isHelpful, setIsHelpful] = useState(false)
-  const [upvotes, setUpvotes] = useState(0)
+  const { id } = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [experience, setExperience] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isHelpful, setIsHelpful] = useState(false);
+  const [upvotes, setUpvotes] = useState(0);
   
-  const handleBack = () => {
-    // If we have college data, go back to the college's experiences page
-    if (experience?.collegeId) {
-      router.push(`/colleges?collegeId=${experience.collegeId}`)
-    } 
-    // Otherwise, try to go back in history or to home
-    else if (window.history.state?.idx > 0) {
-      router.back()
+  const handleBack = (e) => {
+    e?.preventDefault();
+    const collegeId = searchParams.get('collegeId');
+    if (collegeId) {
+      router.push(`/colleges?collegeId=${collegeId}`);
+    } else if (experience?.collegeId) {
+      router.push(`/colleges?collegeId=${experience.collegeId}`);
+    } else if (window.history.length > 1) {
+      router.back();
     } else {
-      router.push('/')
+      router.push('/colleges');
     }
   }
 
   useEffect(() => {
-    fetchExperience()
+    if (id) {
+      fetchExperience();
+    } else {
+      router.push('/colleges');
+    }
   }, [id])
 
   const fetchExperience = async () => {
